@@ -1,0 +1,22 @@
+﻿# .NET
+[Bb]in/
+[Oo]bj/
+*.db
+*.log
+*.txt
+.vs/
+
+# Node / React
+node_modules/
+dist/
+build/
+.env
+.env.local
+
+# WordPress / PHP
+*.zip
+vendor/
+
+# OS
+.DS_Store
+Thumbs.db
