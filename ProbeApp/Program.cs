@@ -1,0 +1,1 @@
+using Stripe; using System; using System.Reflection; public class P { public static void Main() { foreach(var p in typeof(Invoice).GetProperties()) if(p.Name.Contains(\ Sub\)) Console.WriteLine(p.Name); } }

@@ -1,0 +1,111 @@
+@using StripePoc.Blazor.Models.Subscriptions
+@using StripePoc.Blazor.Models.PaymentIntents
+@inject StripePoc.Blazor.Services.ApiService ApiService
+
+<div class="pricing-card p-4">
+    <h3 class="mb-4 text-center">Step 3: Selection & Estimation</h3>
+    
+    <div class="mb-4">
+        <label for="serviceSelect" class="form-label fw-bold">Select a Plan</label>
+        <select id="serviceSelect" @bind="selectedService" @bind:event="onchange" class="form-select">
+            <option value="Basic">Basic Edition ($20/week)</option>
+            <option value="Premium">Premium Edition ($50/week)</option>
+            <option value="Enterprise">Enterprise Solution ($150/week)</option>
+        </select>
+    </div>
+
+    <div class="estimation-summary p-3 bg-white border rounded-3 mb-4 shadow-sm">
+        <div class="d-flex justify-content-between mb-2">
+            <span>Base Subscription:</span>
+            <strong>$@((GetServicePrice(selectedService) / 100.0).ToString("N2"))</strong>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+            <span>Service Fee (Random):</span>
+            <span class="text-secondary">+$@((randomFee / 100.0).ToString("N2"))</span>
+        </div>
+        <hr class="my-2">
+        <div class="d-flex justify-content-between fw-bold text-primary fs-5">
+            <span>Total Weekly Estimate:</span>
+            <span>$@(((GetServicePrice(selectedService) + randomFee) / 100.0).ToString("N2"))</span>
+        </div>
+    </div>
+
+    <button class="btn btn-primary btn-lg w-100 py-3 fw-bold shadow-sm" @onclick="SelectService">
+        Select and Proceed
+    </button>
+</div>
+
+@code {
+    [Parameter] public EventCallback<ServiceSelection> OnServiceSelected { get; set; }
+
+    private string selectedService = "Basic";
+    private long randomFee;
+
+    protected override void OnInitialized()
+    {
+        randomFee = new Random().Next(100, 1000); // Random fee between $1 and $10
+    }
+
+    private long GetServicePrice(string service) => service switch
+    {
+        "Basic" => 2000,
+        "Premium" => 5000,
+        "Enterprise" => 15000,
+        _ => 0
+    };
+
+    private async Task SelectService()
+    {
+        var selection = new ServiceSelection
+        {
+            ServiceName = selectedService,
+            Amount = GetServicePrice(selectedService) + randomFee,
+            BaseAmount = GetServicePrice(selectedService),
+            FeeAmount = randomFee,
+            Currency = "usd",
+            IntervalCount = 1
+        };
+
+        await OnServiceSelected.InvokeAsync(selection);
+    }
+
+    public class ServiceSelection
+    {
+        public string ServiceName { get; set; }
+        public long Amount { get; set; }
+        public long BaseAmount { get; set; }
+        public long FeeAmount { get; set; }
+        public string Currency { get; set; }
+        public int IntervalCount { get; set; }
+    }
+}
+
+<style>
+    .pricing-card {
+        background: #f8f9fa;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    .pricing-card h3 {
+        color: #32325d;
+        margin-bottom: 1.5rem;
+    }
+    .pricing-details {
+        border-top: 1px solid #dee2e6;
+        padding-top: 1rem;
+    }
+    .btn-primary {
+        background-color: #6772e5;
+        border: none;
+        width: 100%;
+        padding: 0.75rem;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+    .btn-primary:hover {
+        background-color: #5469d4;
+    }
+</style>

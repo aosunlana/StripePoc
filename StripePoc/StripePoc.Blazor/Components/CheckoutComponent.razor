@@ -1,0 +1,100 @@
+@using Microsoft.JSInterop
+@inject IJSRuntime JSRuntime
+@inject StripePoc.Blazor.Services.ApiService ApiService
+
+<div class="checkout-container">
+    <h4>Secure Payment Setup</h4>
+    <div id="card-element" class="stripe-card-element mt-4 mb-4">
+        <!-- Stripe.js will mount the card element here -->
+    </div>
+    
+    <div class="text-danger mb-3">@errorMessage</div>
+
+    <button class="btn btn-success" @onclick="HandleCardSetup" disabled="@isProcessing">
+        @if (isProcessing) { <span class="spinner-border spinner-border-sm"></span> }
+        Confirm Card and Complete Setup
+    </button>
+</div>
+
+@code {
+    [Parameter] public Guid AccountId { get; set; }
+    [Parameter] public EventCallback<string> OnSetupComplete { get; set; }
+
+    private bool isProcessing = false;
+    private string errorMessage = "";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("stripeInterop.initialize", "pk_test_your_publishable_key");
+            await JSRuntime.InvokeVoidAsync("stripeInterop.createCardElement", "card-element");
+        }
+    }
+
+    private async Task HandleCardSetup()
+    {
+        isProcessing = true;
+        errorMessage = "";
+
+        try
+        {
+            // Step 1: Get SetupIntent from our backend
+            string clientSecret = await ApiService.InitiateCardSetupAsync(AccountId);
+
+            // Step 2: Confirm on Stripe Side using JS interop
+            var result = await JSRuntime.InvokeAsync<StripeResult>("stripeInterop.confirmCardSetup", clientSecret, new { name = "John Doe" });
+
+            if (!string.IsNullOrEmpty(result.Error))
+            {
+                errorMessage = result.Error;
+            }
+            else
+            {
+                // Step 3: Inform our backend that the card is ready
+                await ApiService.FinaliseCardSetupAsync(AccountId, result.Id);
+                await OnSetupComplete.InvokeAsync(result.Id);
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An unexpected error occurred: " + ex.Message;
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+
+    public class StripeResult
+    {
+        public string Id { get; set; }
+        public string Error { get; set; }
+    }
+}
+
+<style>
+    .checkout-container {
+        border: 1px solid #dee2e6;
+        padding: 2rem;
+        border-radius: 8px;
+        background: #fff;
+    }
+    .stripe-card-element {
+        border: 1px solid #ced4da;
+        padding: 12px;
+        border-radius: 4px;
+        background: #fcfcfc;
+    }
+    .btn-success {
+        background-color: #3ecaf0;
+        border: none;
+        width: 100%;
+        padding: 0.75rem;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+    .btn-success:hover {
+        background-color: #35b3d4;
+    }
+</style>

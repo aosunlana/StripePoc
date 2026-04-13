@@ -1,0 +1,8 @@
+C:\Users\osunl\.gemini\antigravity\playground\emerald-kilonova\StripePoc\StripePoc.Api\Brokers\Payments\PaymentBroker.cs(108,50): error CS1061: 'Invoice' does not contain a definition for 'PaymentIntent' and no accessible extension method 'PaymentIntent' accepting a first argument of type 'Invoice' could be found (are you missing a using directive or an assembly reference?) [C:\Users\osunl\.gemini\antigravity\playground\emerald-kilonova\StripePoc\StripePoc.Api\StripePoc.Api.csproj]
+C:\Users\osunl\.gemini\antigravity\playground\emerald-kilonova\StripePoc\StripePoc.Api\Brokers\Payments\PaymentBroker.cs(110,84): error CS1061: 'Invoice' does not contain a definition for 'PaymentIntent' and no accessible extension method 'PaymentIntent' accepting a first argument of type 'Invoice' could be found (are you missing a using directive or an assembly reference?) [C:\Users\osunl\.gemini\antigravity\playground\emerald-kilonova\StripePoc\StripePoc.Api\StripePoc.Api.csproj]
+
+Build FAILED.
+    16 Warning(s)
+    2 Error(s)
+
+Time Elapsed 00:00:01.02

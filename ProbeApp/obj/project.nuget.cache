@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "dgSpecHash": "VVr+DFwZKxo=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\osunl\\.gemini\\antigravity\\playground\\emerald-kilonova\\ProbeApp\\ProbeApp.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\osunl\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\osunl\\.nuget\\packages\\stripe.net\\51.0.0\\stripe.net.51.0.0.nupkg.sha512",
+    "C:\\Users\\osunl\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.0\\system.configuration.configurationmanager.9.0.0.nupkg.sha512",
+    "C:\\Users\\osunl\\.nuget\\packages\\system.diagnostics.eventlog\\9.0.0\\system.diagnostics.eventlog.9.0.0.nupkg.sha512",
+    "C:\\Users\\osunl\\.nuget\\packages\\system.security.cryptography.protecteddata\\9.0.0\\system.security.cryptography.protecteddata.9.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

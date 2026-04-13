@@ -1,0 +1,181 @@
+/**
+ * Simple Wholesale Discounts — Frontend Styles
+ *
+ * Styles for the discount badge, pricing table, and savings message
+ * displayed on product pages, cart, and checkout.
+ *
+ * Uses CSS custom properties so store owners can override via their theme.
+ *
+ * @package SimpleWholesaleDiscounts
+ */
+
+/* =========================================================================
+   Design Tokens (overridable from theme)
+   ========================================================================= */
+:root {
+    --swd-fe-primary: #7f54b3;
+    --swd-fe-primary-bg: #f0eef8;
+    --swd-fe-success-bg: #d1fae5;
+    --swd-fe-success-text: #065f46;
+    --swd-fe-success-icon: #10b981;
+    --swd-fe-border: #e0d9f5;
+    --swd-fe-radius: 8px;
+    --swd-fe-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+}
+
+/* =========================================================================
+   Discount Badge (single product page)
+   ========================================================================= */
+.swd-discount-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    margin: 16px 0;
+    background: var(--swd-fe-primary-bg);
+    border: 1px solid var(--swd-fe-border);
+    border-left: 4px solid var(--swd-fe-primary);
+    border-radius: var(--swd-fe-radius);
+}
+
+.swd-discount-badge__icon {
+    display: flex;
+    align-items: center;
+    color: var(--swd-fe-primary);
+    flex-shrink: 0;
+}
+
+.swd-discount-badge__text {
+    font-size: 14px;
+    color: #3c2173;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* =========================================================================
+   Tiered Pricing Table (single product page)
+   ========================================================================= */
+.swd-pricing-table {
+    margin: 24px 0;
+    border: 1px solid var(--swd-fe-border);
+    border-radius: var(--swd-fe-radius);
+    overflow: hidden;
+    box-shadow: var(--swd-fe-shadow);
+}
+
+.swd-pricing-table__title {
+    background: var(--swd-fe-primary-bg);
+    color: var(--swd-fe-primary);
+    padding: 12px 16px;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    border-bottom: 1px solid var(--swd-fe-border);
+}
+
+.swd-pricing-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background: #fff;
+}
+
+.swd-pricing-table thead th {
+    padding: 10px 14px;
+    background: #f9f9f9;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #555;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+.swd-pricing-table tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #333;
+}
+
+.swd-pricing-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.swd-pricing-table .swd-discounted-row {
+    background: #fdfbff;
+}
+
+.swd-pricing-table .swd-discounted-row td {
+    color: #2d1857;
+}
+
+.swd-pricing-table .swd-price-cell {
+    font-weight: 600;
+}
+
+.swd-pricing-table .swd-discounted-row .swd-price-cell {
+    color: var(--swd-fe-primary);
+}
+
+/* =========================================================================
+   Savings Message (cart / checkout)
+   ========================================================================= */
+.swd-savings-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    margin: 0 0 16px;
+    background: var(--swd-fe-success-bg);
+    border: 1px solid #a7f3d0;
+    border-radius: var(--swd-fe-radius);
+}
+
+.swd-savings-message__icon {
+    display: flex;
+    align-items: center;
+    color: var(--swd-fe-success-icon);
+    flex-shrink: 0;
+}
+
+.swd-savings-message__text {
+    font-size: 14px;
+    color: var(--swd-fe-success-text);
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* =========================================================================
+   Discount Row in Cart / Checkout Totals
+   ========================================================================= */
+.swd-discount-row th,
+.swd-discount-row td {
+    color: var(--swd-fe-primary);
+}
+
+.swd-discount-amount {
+    font-weight: 700;
+}
+
+/* =========================================================================
+   Responsive
+   ========================================================================= */
+@media (max-width: 600px) {
+    .swd-pricing-table table {
+        font-size: 13px;
+    }
+
+    .swd-pricing-table thead th,
+    .swd-pricing-table tbody td {
+        padding: 8px 10px;
+    }
+
+    .swd-discount-badge,
+    .swd-savings-message {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

@@ -1,0 +1,16 @@
+<Solution>
+  <Project Path="StripePoc.Api/StripePoc.Api.csproj" />
+  <Project Path="StripePoc.Blazor/StripePoc.Blazor.csproj" />
+  <Project Path="StripePoc.ProbeApp/ProbeApp.csproj" />
+  <Project Path="NativeQuoteApprovalFlow/NativeQuoteApprovalFlow.csproj" />
+  <Project Path="NativeInvoicePaymentFlow/NativeInvoicePaymentFlow.csproj" />
+  <Project Path="WalletSetupFlow/WalletSetupFlow.csproj" />
+  <Project Path="SubscriptionDirectChargeFlow/SubscriptionDirectChargeFlow.csproj" />
+  <Project Path="OneTimeDirectChargeFlow/OneTimeDirectChargeFlow.csproj" />
+  <Project Path="OneTimeQuoteApprovalFlow/OneTimeQuoteApprovalFlow.csproj" />
+  <Project Path="RefundPaymentFlow/RefundPaymentFlow.csproj" />
+  <Project Path="StripeTaxFlow/StripeTaxFlow.csproj" />
+  <Project Path="QuoteAcceptFlow/QuoteAcceptFlow.csproj" />
+  <Project Path="ConnectOnboardingFlow/ConnectOnboardingFlow.csproj" />
+  <Project Path="ConnectFullLifecycleFlow/ConnectFullLifecycleFlow.csproj" />
+</Solution>

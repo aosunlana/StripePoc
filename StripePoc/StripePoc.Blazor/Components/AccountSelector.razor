@@ -1,0 +1,76 @@
+@using StripePoc.Blazor.Models.Accounts
+@using StripePoc.Blazor.Models.Businesses
+@inject StripePoc.Blazor.Services.ApiService ApiService
+
+<div class="account-selector p-4">
+    <h3 class="mb-4 text-center">Step 1: Select Your Identity</h3>
+    <p class="text-muted text-center mb-5">Choose a business and account to begin the payment lifecycle.</p>
+
+    @if (businesses == null)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Loading businesses...</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4 justify-content-center">
+            @foreach (var business in businesses)
+            {
+                <div class="col-md-8">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">@business.Name</h5>
+                        </div>
+                        <div class="list-group list-group-flush">
+                            @if (accountsByBusiness.TryGetValue(business.Id, out var accounts))
+                            {
+                                @foreach (var account in accounts)
+                                {
+                                    <button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                            @onclick="() => SelectAccount(account)">
+                                        <div>
+                                            <strong>@account.Name</strong>
+                                            <div class="small text-muted">ID: @account.Id.ToString().Substring(0, 8)...</div>
+                                        </div>
+                                        <span class="badge bg-light text-primary rounded-pill">Select</span>
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public EventCallback<Account> OnAccountSelected { get; set; }
+
+    private List<Business> businesses;
+    private Dictionary<Guid, List<Account>> accountsByBusiness = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            businesses = await ApiService.GetBusinessesAsync();
+            foreach (var business in businesses)
+            {
+                var accounts = await ApiService.GetAccountsByBusinessAsync(business.Id);
+                accountsByBusiness[business.Id] = accounts;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading identity data: {ex.Message}");
+        }
+    }
+
+    private async Task SelectAccount(Account account)
+    {
+        await OnAccountSelected.InvokeAsync(account);
+    }
+}

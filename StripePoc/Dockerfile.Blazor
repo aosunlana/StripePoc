@@ -1,0 +1,62 @@
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build-env
+WORKDIR /app
+
+# Copy everything and restore
+COPY . ./
+RUN dotnet restore "StripePoc.Blazor/StripePoc.Blazor.csproj"
+
+# Build the Blazor project with high compression enabled
+RUN dotnet publish "StripePoc.Blazor/StripePoc.Blazor.csproj" -c Release -o /app/publish
+
+# Runtime stage
+FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
+
+# Copy everything from the publish output's wwwroot.
+# This includes the _framework folder and all static assets.
+COPY --from=build-env /app/publish/wwwroot/ .
+
+# Professional Nginx config for Blazor WASM (SPA) with Static Gzip support
+RUN printf 'server { \n\
+    listen 80; \n\
+    server_name localhost; \n\
+    root /usr/share/nginx/html; \n\
+    index index.html; \n\
+\n\
+    # Enable Gzip compression for all text-based assets \n\
+    gzip on; \n\
+    gzip_types text/plain text/css application/javascript application/json image/x-icon; \n\
+    gzip_static on; # This tells Nginx to look for .gz files on disk \n\
+\n\
+    # Explicitly handle WASM and framework mime types \n\
+    include /etc/nginx/mime.types; \n\
+    types { \n\
+        application/wasm wasm; \n\
+        application/octet-stream clr; \n\
+        application/octet-stream dll; \n\
+        application/octet-stream pdb; \n\
+        application/manifest+json webmanifest; \n\
+    } \n\
+\n\
+    location / { \n\
+        try_files $uri $uri/ /index.html; \n\
+    } \n\
+\n\
+    # Framework files are unique and should be cached \n\
+    location /_framework/ { \n\
+        gzip_static on; \n\
+        try_files $uri =404; \n\
+    } \n\
+\n\
+    # Static assets caching \n\
+    location ~* \.(js|css|wasm|png|jpg|jpeg|gif|ico|json|dll|woff|woff2)$ { \n\
+        gzip_static on; \n\
+        try_files $uri =404; \n\
+        expires 1y; \n\
+        add_header Cache-Control "public"; \n\
+    } \n\
+}' > /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

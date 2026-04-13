@@ -1,0 +1,27 @@
+## .NET Core
+bin/
+obj/
+out/
+publish/
+
+## Visual Studio
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+.vs-intent-filter/
+
+## SQL Server / Local DB
+*.mdf
+*.ldf
+*.db
+*.db-shm
+*.db-wal
+stripe_poc.db
+
+## Rider
+.idea/
+
+## OS
+.DS_Store
+Thumbs.db

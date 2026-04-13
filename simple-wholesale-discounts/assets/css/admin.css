@@ -1,0 +1,1031 @@
+/**
+ * Simple Wholesale Discounts — Admin Styles
+ *
+ * Uses WooCommerce's native color variables and extends them with
+ * the plugin's own design tokens for a seamless admin experience.
+ *
+ * @package SimpleWholesaleDiscounts
+ */
+
+/* =========================================================================
+   Design Tokens
+   ========================================================================= */
+:root {
+	--swd-primary: #7f54b3;
+	--swd-primary-dark: #6b47a0;
+	--swd-primary-light: #f0eef8;
+	--swd-primary-border: #c5b8e0;
+	--swd-success: #00a32a;
+	--swd-danger: #b32d2e;
+	--swd-text: #1d2327;
+	--swd-text-muted: #646970;
+	--swd-border: #c3c4c7;
+	--swd-radius: 8px;
+	--swd-radius-sm: 4px;
+	--swd-shadow: 0 1px 3px rgba(0, 0, 0, .1), 0 1px 2px rgba(0, 0, 0, .06);
+	--swd-card-bg: #fff;
+	--swd-gap: 24px;
+}
+
+/* =========================================================================
+   Wrap & Layout
+   ========================================================================= */
+.swd-wrap {
+	max-width: 960px;
+}
+
+.swd-form-wrap {
+	max-width: 820px;
+}
+
+.swd-wrap .wp-heading-inline {
+	font-size: 23px;
+}
+
+/* =========================================================================
+   Cards
+   ========================================================================= */
+.swd-card {
+	background: var(--swd-card-bg);
+	border: 1px solid var(--swd-border);
+	border-radius: var(--swd-radius);
+	box-shadow: var(--swd-shadow);
+	margin-top: var(--swd-gap);
+	/* overflow: visible — required so the product search dropdown is not clipped */
+	overflow: visible;
+}
+
+.swd-card__header {
+	background: #f6f7f7;
+	border-bottom: 1px solid var(--swd-border);
+	padding: 14px 20px;
+}
+
+.swd-card__header h2 {
+	font-size: 14px;
+	font-weight: 600;
+	margin: 0;
+	color: var(--swd-text);
+	text-transform: uppercase;
+	letter-spacing: .04em;
+}
+
+.swd-card__body {
+	padding: 24px;
+}
+
+/* =========================================================================
+   Field Groups
+   ========================================================================= */
+.swd-field {
+	margin-bottom: 22px;
+}
+
+.swd-field:last-child {
+	margin-bottom: 0;
+}
+
+.swd-field label:not(.swd-toggle-switch):not(.swd-type-card):not(.swd-apply-card):not(.swd-cat-item) {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 6px;
+	color: var(--swd-text);
+}
+
+.swd-field .required {
+	color: var(--swd-danger);
+}
+
+.swd-field .description {
+	color: var(--swd-text-muted);
+	font-size: 12.5px;
+	margin-top: 5px;
+}
+
+.swd-field input[type="text"],
+.swd-field input[type="number"],
+.swd-field input[type="email"] {
+	border-radius: var(--swd-radius-sm);
+}
+
+.swd-field.has-error input,
+.swd-field.has-error textarea {
+	border-color: var(--swd-danger);
+	box-shadow: 0 0 0 1px var(--swd-danger);
+}
+
+.swd-field-error {
+	display: block;
+	color: var(--swd-danger);
+	font-size: 12px;
+	margin-top: 4px;
+}
+
+/* =========================================================================
+   Toggle Switch (for Status field)
+   ========================================================================= */
+.swd-toggle-switch {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.swd-toggle-switch input[type="checkbox"] {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.swd-toggle-slider {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: 24px;
+	background: #c3c4c7;
+	border-radius: 12px;
+	transition: background 0.2s ease;
+	flex-shrink: 0;
+}
+
+.swd-toggle-slider::after {
+	content: '';
+	position: absolute;
+	left: 3px;
+	top: 3px;
+	width: 18px;
+	height: 18px;
+	background: #fff;
+	border-radius: 50%;
+	transition: transform 0.2s ease;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, .2);
+}
+
+.swd-toggle-switch input:checked+.swd-toggle-slider {
+	background: var(--swd-primary);
+}
+
+.swd-toggle-switch input:checked+.swd-toggle-slider::after {
+	transform: translateX(20px);
+}
+
+.swd-toggle-switch input:focus-visible+.swd-toggle-slider {
+	outline: 2px solid var(--swd-primary);
+	outline-offset: 2px;
+}
+
+.swd-toggle-label {
+	font-weight: 500;
+	font-size: 13px;
+	color: var(--swd-text);
+}
+
+/* =========================================================================
+   Discount Type Cards (Percentage / Flat)
+   ========================================================================= */
+.swd-type-cards {
+	display: flex;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.swd-type-card {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 6px;
+	padding: 18px 22px;
+	border: 2px solid var(--swd-border);
+	border-radius: var(--swd-radius);
+	cursor: pointer;
+	min-width: 200px;
+	flex: 1;
+	background: var(--swd-card-bg);
+	transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+	position: relative;
+}
+
+.swd-type-card input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.swd-type-card:hover {
+	border-color: var(--swd-primary-border);
+	background: #faf9fd;
+}
+
+.swd-type-card.selected {
+	border-color: var(--swd-primary);
+	background: var(--swd-primary-light);
+	box-shadow: 0 0 0 3px rgba(127, 84, 179, .15);
+}
+
+.swd-type-card__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 40px;
+	height: 40px;
+	background: var(--swd-primary-light);
+	border-radius: 8px;
+	font-size: 20px;
+	font-weight: 700;
+	color: var(--swd-primary);
+	margin-bottom: 4px;
+}
+
+.swd-type-card.selected .swd-type-card__icon {
+	background: var(--swd-primary);
+	color: #fff;
+}
+
+.swd-type-card__title {
+	font-weight: 600;
+	font-size: 15px;
+	color: var(--swd-text);
+}
+
+.swd-type-card__desc {
+	font-size: 12px;
+	color: var(--swd-text-muted);
+}
+
+/* Input with prefix symbol */
+.swd-input-prefix-wrap {
+	display: flex;
+	align-items: center;
+	gap: 0;
+	width: fit-content;
+}
+
+.swd-input-prefix {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 36px;
+	height: 30px;
+	background: #f0f0f1;
+	border: 1px solid var(--swd-border);
+	border-right: none;
+	border-radius: var(--swd-radius-sm) 0 0 var(--swd-radius-sm);
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--swd-text-muted);
+	padding: 0 8px;
+}
+
+.swd-input-prefix-wrap input[type="number"] {
+	border-radius: 0 var(--swd-radius-sm) var(--swd-radius-sm) 0 !important;
+	width: 120px;
+}
+
+/* Live preview text */
+.swd-discount-preview {
+	margin-top: 10px !important;
+	padding: 10px 14px;
+	background: var(--swd-primary-light);
+	border-left: 3px solid var(--swd-primary);
+	border-radius: 0 var(--swd-radius-sm) var(--swd-radius-sm) 0;
+	color: var(--swd-primary-dark) !important;
+	font-style: italic;
+	font-size: 13px !important;
+}
+
+/* =========================================================================
+   Apply-To Cards (All Products / Specific Products / Categories)
+   ========================================================================= */
+.swd-apply-cards {
+	display: flex;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.swd-apply-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: 8px;
+	padding: 22px 16px;
+	border: 2px solid var(--swd-border);
+	border-radius: var(--swd-radius);
+	cursor: pointer;
+	flex: 1;
+	min-width: 160px;
+	background: var(--swd-card-bg);
+	transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+	position: relative;
+}
+
+.swd-apply-card input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.swd-apply-card:hover {
+	border-color: var(--swd-primary-border);
+	background: #faf9fd;
+}
+
+.swd-apply-card.selected {
+	border-color: var(--swd-primary);
+	background: var(--swd-primary-light);
+	box-shadow: 0 0 0 3px rgba(127, 84, 179, .15);
+}
+
+.swd-apply-card__icon {
+	color: var(--swd-text-muted);
+	transition: color 0.18s ease;
+}
+
+.swd-apply-card.selected .swd-apply-card__icon {
+	color: var(--swd-primary);
+}
+
+.swd-apply-card__title {
+	font-weight: 600;
+	font-size: 13px;
+	color: var(--swd-text);
+}
+
+.swd-apply-card__desc {
+	font-size: 11.5px;
+	color: var(--swd-text-muted);
+}
+
+/* =========================================================================
+   Product Search
+   ========================================================================= */
+.swd-product-search {
+	position: relative;
+	max-width: 420px;
+}
+
+.swd-search-dropdown {
+	/*
+	 * position: fixed — fully escapes all parent overflow/stacking contexts.
+	 * top, left, width are calculated dynamically in admin.js via getBoundingClientRect().
+	 */
+	position: fixed;
+	z-index: 999999;
+	background: #fff;
+	border: 1px solid var(--swd-border);
+	border-radius: var(--swd-radius-sm);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, .15);
+	max-height: 300px;
+	overflow-y: auto;
+}
+
+.swd-search-result {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 14px;
+	cursor: pointer;
+	transition: background 0.15s ease;
+}
+
+.swd-search-result:hover,
+.swd-search-result:focus {
+	background: var(--swd-primary-light);
+}
+
+.swd-search-result img {
+	width: 36px;
+	height: 36px;
+	object-fit: cover;
+	border-radius: 4px;
+	flex-shrink: 0;
+}
+
+.swd-search-result__info {
+	flex: 1;
+}
+
+.swd-search-result__name {
+	font-weight: 500;
+	font-size: 13px;
+	color: var(--swd-text);
+}
+
+.swd-search-result__price {
+	font-size: 12px;
+	color: var(--swd-text-muted);
+}
+
+.swd-search-no-results,
+.swd-search-searching {
+	padding: 12px 14px;
+	color: var(--swd-text-muted);
+	font-size: 13px;
+	text-align: center;
+}
+
+/* Selected product tags */
+.swd-selected-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 12px;
+}
+
+.swd-product-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: var(--swd-primary-light);
+	border: 1px solid var(--swd-primary-border);
+	border-radius: 20px;
+	padding: 4px 12px;
+	font-size: 12.5px;
+	color: var(--swd-primary-dark);
+	max-width: 250px;
+}
+
+.swd-product-tag__name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.swd-product-tag__remove {
+	display: inline-flex;
+	cursor: pointer;
+	background: none;
+	border: none;
+	padding: 0;
+	color: var(--swd-primary);
+	line-height: 1;
+	font-size: 16px;
+	flex-shrink: 0;
+}
+
+.swd-product-tag__remove:hover {
+	color: var(--swd-danger);
+}
+
+/* =========================================================================
+   Category Checkbox List
+   ========================================================================= */
+.swd-category-list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	max-height: 280px;
+	overflow-y: auto;
+	border: 1px solid var(--swd-border);
+	border-radius: var(--swd-radius-sm);
+	padding: 12px 14px;
+	background: #fafafa;
+}
+
+.swd-cat-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 0;
+	font-size: 13px;
+	cursor: pointer;
+	color: var(--swd-text);
+}
+
+.swd-cat-item:hover {
+	color: var(--swd-primary);
+}
+
+.swd-cat-count {
+	color: var(--swd-text-muted);
+	font-size: 11.5px;
+}
+
+/* =========================================================================
+   Quantity Row
+   ========================================================================= */
+.swd-quantity-row {
+	display: flex;
+	gap: var(--swd-gap);
+	flex-wrap: wrap;
+}
+
+.swd-quantity-row .swd-field {
+	flex: 1;
+	min-width: 200px;
+}
+
+.swd-qty-preview {
+	margin-top: 14px !important;
+	padding: 10px 14px;
+	background: #f0f6fc;
+	border-left: 3px solid #2271b1;
+	border-radius: 0 var(--swd-radius-sm) var(--swd-radius-sm) 0;
+	color: #1d2327 !important;
+	font-size: 13px !important;
+}
+
+/* =========================================================================
+   Form Footer
+   ========================================================================= */
+.swd-form-footer {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	padding: 24px 0 16px;
+	border-top: 1px solid var(--swd-border);
+	margin-top: var(--swd-gap);
+}
+
+.swd-cancel-link {
+	color: var(--swd-text-muted);
+	text-decoration: none;
+	font-size: 13px;
+}
+
+.swd-cancel-link:hover {
+	color: var(--swd-danger);
+}
+
+/* Primary button overrides for WC style */
+.swd-add-rule-btn,
+.swd-cta-button {
+	background: var(--swd-primary) !important;
+	border-color: var(--swd-primary-dark) !important;
+	color: #fff !important;
+	text-decoration: none !important;
+}
+
+.swd-add-rule-btn:hover,
+.swd-cta-button:hover {
+	background: var(--swd-primary-dark) !important;
+	border-color: var(--swd-primary-dark) !important;
+}
+
+/* Dependent fields */
+.swd-dependent-field {
+	margin-top: 16px;
+	padding-top: 16px;
+	border-top: 1px dashed var(--swd-border);
+}
+
+/* =========================================================================
+   List Table Enhancements
+   ========================================================================= */
+.swd-wrap .wp-list-table .column-discount,
+.swd-wrap .wp-list-table .column-is_active {
+	width: 120px;
+}
+
+.swd-wrap .wp-list-table .column-actions {
+	width: 140px;
+}
+
+.swd-wrap .wp-list-table .column-quantity_range {
+	width: 180px;
+}
+
+/* Inline status toggle button */
+.swd-status-toggle {
+	display: inline-block;
+	padding: 3px 12px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	border: none;
+	transition: opacity 0.15s ease;
+}
+
+.swd-status-toggle.active {
+	background: #d1e7dd;
+	color: #0a3622;
+}
+
+.swd-status-toggle.inactive {
+	background: #f0f0f1;
+	color: var(--swd-text-muted);
+}
+
+.swd-status-toggle:hover {
+	opacity: .8;
+}
+
+.swd-status-toggle.swd-loading {
+	opacity: .5;
+	cursor: wait;
+}
+
+.swd-applies-all {
+	color: var(--swd-primary);
+	font-weight: 500;
+}
+
+/* =========================================================================
+   Empty State
+   ========================================================================= */
+.swd-empty-state {
+	text-align: center;
+	padding: 60px 24px;
+	background: var(--swd-card-bg);
+	border: 1px solid var(--swd-border);
+	border-radius: var(--swd-radius);
+	margin-top: var(--swd-gap);
+	box-shadow: var(--swd-shadow);
+}
+
+.swd-empty-icon {
+	margin-bottom: 20px;
+}
+
+.swd-empty-state h2 {
+	font-size: 20px;
+	font-weight: 600;
+	color: var(--swd-text);
+	margin-bottom: 8px;
+}
+
+.swd-empty-state p {
+	color: var(--swd-text-muted);
+	font-size: 14px;
+	margin-bottom: 24px;
+}
+
+/* =========================================================================
+   Product Data Tab — #swd_product_discount_panel
+   Uses the panel ID as a specificity anchor to beat WooCommerce's own
+   .woocommerce_options_panel label/input rules everywhere.
+   ========================================================================= */
+
+/* Reset WooCommerce's floated-label layout inside our panel entirely. */
+#swd_product_discount_panel,
+#swd_product_discount_panel * {
+	box-sizing: border-box;
+}
+
+#swd_product_discount_panel {
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+/* WC forces labels to float:left with a fixed width — undo it inside our panel. */
+#swd_product_discount_panel label {
+	float: none !important;
+	width: auto !important;
+	display: block;
+	margin: 0 0 4px !important;
+	padding: 0 !important;
+	font-size: 12px !important;
+	font-weight: 600 !important;
+	color: #1d2327 !important;
+	line-height: 1.4 !important;
+}
+
+/* WC forces inputs/selects to a fixed width — undo it. */
+#swd_product_discount_panel input[type="text"],
+#swd_product_discount_panel input[type="number"],
+#swd_product_discount_panel select {
+	float: none !important;
+	width: 100% !important;
+	max-width: 100% !important;
+	margin: 0 !important;
+	font-size: 13px !important;
+	padding: 5px 8px !important;
+	border: 1px solid #c3c4c7 !important;
+	border-radius: 4px !important;
+	background: #fff !important;
+	color: #1d2327 !important;
+	height: auto !important;
+	line-height: normal !important;
+}
+
+#swd_product_discount_panel input:focus,
+#swd_product_discount_panel select:focus {
+	border-color: #7f54b3 !important;
+	outline: none !important;
+	box-shadow: 0 0 0 1px #7f54b3 !important;
+}
+
+/* WC adds margin/padding on p tags inside panels — reset. */
+#swd_product_discount_panel p {
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+/* ---- Sections ---- */
+.swd-pt-section {
+	padding: 16px 20px 20px;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.swd-pt-section:last-child {
+	border-bottom: none;
+}
+
+.swd-pt-section--quickadd {
+	background: #f9f9f9;
+}
+
+/* ---- Section header ---- */
+.swd-pt-section-header {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: space-between !important;
+	margin-bottom: 14px !important;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.swd-pt-section-header h3 {
+	font-size: 11px !important;
+	font-weight: 700 !important;
+	text-transform: uppercase !important;
+	letter-spacing: .07em !important;
+	color: #646970 !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	float: none !important;
+	width: auto !important;
+}
+
+.swd-pt-view-all {
+	font-size: 12px;
+	color: #7f54b3;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.swd-pt-view-all:hover {
+	text-decoration: underline;
+}
+
+/* ---- Notices ---- */
+.swd-pt-notice {
+	padding: 9px 14px !important;
+	border-radius: 4px !important;
+	font-size: 13px !important;
+	font-weight: 500 !important;
+	border-left: 4px solid transparent !important;
+	margin: 0 0 14px !important;
+}
+
+.swd-pt-notice--success {
+	background: #edfaee !important;
+	border-left-color: #00a32a !important;
+	color: #1a4731 !important;
+}
+
+.swd-pt-notice--error {
+	background: #fcf0f1 !important;
+	border-left-color: #b32d2e !important;
+	color: #6c0b0b !important;
+}
+
+/* ---- Empty state ---- */
+.swd-pt-empty {
+	color: #8c8f94 !important;
+	font-size: 13px !important;
+	font-style: italic !important;
+	margin: 0 !important;
+	padding: 6px 0 !important;
+}
+
+/* ---- Rules table ---- */
+.swd-pt-table {
+	width: 100% !important;
+	border-collapse: collapse !important;
+	font-size: 12.5px !important;
+	margin-bottom: 6px !important;
+	table-layout: auto !important;
+}
+
+.swd-pt-table thead tr {
+	background: #f0f0f1 !important;
+}
+
+.swd-pt-table thead th {
+	font-size: 11px !important;
+	font-weight: 700 !important;
+	text-transform: uppercase !important;
+	letter-spacing: .04em !important;
+	color: #50575e !important;
+	padding: 7px 10px !important;
+	text-align: left !important;
+	border: none !important;
+	float: none !important;
+	width: auto !important;
+}
+
+.swd-pt-table tbody tr {
+	border-bottom: 1px solid #f0f0f1 !important;
+}
+
+.swd-pt-table tbody tr:last-child {
+	border-bottom: none !important;
+}
+
+.swd-pt-table tbody td {
+	padding: 8px 10px !important;
+	vertical-align: middle !important;
+	color: #1d2327 !important;
+	float: none !important;
+	width: auto !important;
+}
+
+.swd-pt-name-cell {
+	font-weight: 500 !important;
+}
+
+.swd-pt-table code {
+	background: #f0f0f1;
+	padding: 2px 6px;
+	border-radius: 3px;
+	font-size: 11px;
+	color: #50575e;
+}
+
+/* Status badges */
+.swd-pt-badge {
+	display: inline-block !important;
+	padding: 2px 9px !important;
+	border-radius: 20px !important;
+	font-size: 11px !important;
+	font-weight: 600 !important;
+	white-space: nowrap !important;
+	float: none !important;
+}
+
+.swd-pt-badge--active {
+	background: #d1e7dd !important;
+	color: #0a3622 !important;
+}
+
+.swd-pt-badge--inactive {
+	background: #f0f0f1 !important;
+	color: #646970 !important;
+}
+
+/* Action links */
+.swd-pt-actions-cell {
+	white-space: nowrap !important;
+}
+
+.swd-pt-action-link {
+	font-size: 12px !important;
+	text-decoration: none !important;
+	color: #2271b1 !important;
+}
+
+.swd-pt-action-link:hover {
+	text-decoration: underline !important;
+}
+
+.swd-pt-action-link--danger {
+	color: #b32d2e !important;
+}
+
+.swd-pt-divider {
+	color: #c3c4c7;
+	margin: 0 4px;
+}
+
+/* ---- Quick-add grid ---- */
+.swd-pt-grid {
+	display: grid !important;
+	grid-template-columns: 1fr 1fr !important;
+	gap: 14px 20px !important;
+}
+
+.swd-pt-field {
+	display: flex !important;
+	flex-direction: column !important;
+	gap: 5px !important;
+	float: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+.swd-pt-field--full {
+	grid-column: 1 / -1 !important;
+}
+
+/* Input prefix group */
+.swd-pt-input-group {
+	display: flex !important;
+	align-items: stretch !important;
+}
+
+.swd-pt-input-prefix {
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	padding: 0 10px !important;
+	min-width: 32px !important;
+	background: #f0f0f1 !important;
+	border: 1px solid #c3c4c7 !important;
+	border-right: none !important;
+	border-radius: 4px 0 0 4px !important;
+	font-size: 13px !important;
+	font-weight: 600 !important;
+	color: #646970 !important;
+	flex-shrink: 0 !important;
+}
+
+.swd-pt-input-group input {
+	border-radius: 0 4px 4px 0 !important;
+}
+
+/* Hint text */
+.swd-pt-hint {
+	font-size: 11.5px !important;
+	color: #8c8f94 !important;
+	line-height: 1.3 !important;
+	float: none !important;
+}
+
+/* Checkbox label */
+.swd-pt-checkbox-label {
+	display: flex !important;
+	align-items: center !important;
+	gap: 8px !important;
+	font-size: 13px !important;
+	font-weight: normal !important;
+	color: #1d2327 !important;
+	cursor: pointer !important;
+	float: none !important;
+	width: auto !important;
+}
+
+#swd_product_discount_panel .swd-pt-checkbox-label input[type="checkbox"] {
+	width: auto !important;
+	height: auto !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: none !important;
+	box-shadow: none !important;
+	float: none !important;
+}
+
+/* Save note */
+.swd-pt-save-note {
+	margin: 14px 0 0 !important;
+	padding: 0 !important;
+	font-size: 12px !important;
+	color: #646970 !important;
+	display: flex !important;
+	align-items: center !important;
+	gap: 6px !important;
+}
+
+.swd-pt-save-note .dashicons {
+	font-size: 15px !important;
+	width: 15px !important;
+	height: 15px !important;
+	color: #2271b1 !important;
+	flex-shrink: 0 !important;
+}
+
+@media (max-width: 900px) {
+	.swd-pt-grid {
+		grid-template-columns: 1fr !important;
+	}
+
+	.swd-pt-field--full {
+		grid-column: 1 !important;
+	}
+}
+
+/* =========================================================================
+   Responsive
+   ========================================================================= */
+@media (max-width: 782px) {
+
+	.swd-type-cards,
+	.swd-apply-cards {
+		flex-direction: column;
+	}
+
+	.swd-quantity-row {
+		flex-direction: column;
+	}
+
+	.swd-type-card,
+	.swd-apply-card {
+		min-width: unset;
+		flex-direction: row;
+		text-align: left;
+		align-items: flex-start;
+	}
+
+	.swd-apply-card {
+		align-items: center;
+		text-align: left;
+	}
+
+	.swd-form-footer {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}

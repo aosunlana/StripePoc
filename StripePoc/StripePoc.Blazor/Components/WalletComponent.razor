@@ -1,0 +1,135 @@
+@using Microsoft.JSInterop
+@using StripePoc.Blazor.Models.Accounts
+@using StripePoc.Blazor.Models.PaymentAccounts
+@using StripePoc.Blazor.Models.PaymentMethods
+@inject IJSRuntime JSRuntime
+@inject StripePoc.Blazor.Services.ApiService ApiService
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+<div class="wallet-container p-4">
+    <h3 class="mb-4 text-center">Step 2: Setup Your Payment Method</h3>
+    <p class="text-muted text-center mb-4">We'll securely save your card to Stripe for easy one-click payments later.</p>
+
+    <div class="card shadow-sm border-0 rounded-3 p-4 bg-white">
+        <label class="form-label fw-bold">Card Details</label>
+        <div id="card-element" class="stripe-card-element mb-4">
+            <!-- Stripe.js will mount the card element here -->
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger py-2 small">@errorMessage</div>
+        }
+
+        <button class="btn btn-primary btn-lg w-100 py-3 fw-bold" 
+                @onclick="HandleCardSetup" 
+                disabled="@isProcessing">
+            @if (isProcessing)
+            {
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                <span>Securing Card...</span>
+            }
+            else
+            {
+                <span>Save Card to Profile</span>
+            }
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Account SelectedAccount { get; set; }
+    [Parameter] public EventCallback<PaymentMethod> OnSetupComplete { get; set; }
+
+    private bool isProcessing = false;
+    private string errorMessage = "";
+    private PaymentAccount paymentAccount;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            string publishableKey = Configuration["Stripe:PublishableKey"];
+            await JSRuntime.InvokeVoidAsync("stripeInterop.initialize", publishableKey);
+            await JSRuntime.InvokeVoidAsync("stripeInterop.createCardElement", "card-element");
+        }
+    }
+
+    private async Task HandleCardSetup()
+    {
+        isProcessing = true;
+        errorMessage = "";
+
+        try
+        {
+            // Step 1: Ensure the Local Account is registered as a Stripe Customer
+            try { paymentAccount = await ApiService.ProvidePaymentAccountAsync(SelectedAccount.Id); }
+            catch (Exception ex) { throw new Exception($"[Step 1 - ProvidePaymentAccount] {ex.Message}"); }
+
+            // Step 2: Initiate the SetupIntent
+            string clientSecret;
+            try { clientSecret = await ApiService.InitiateCardSetupAsync(SelectedAccount.Id); }
+            catch (Exception ex) { throw new Exception($"[Step 2 - InitiateCardSetup] {ex.Message}"); }
+
+            // Step 3: Confirm via Stripe.js
+            var result = await JSRuntime.InvokeAsync<StripeResult>(
+                "stripeInterop.confirmCardSetup", 
+                clientSecret, 
+                new { name = SelectedAccount.Name });
+
+            if (!string.IsNullOrEmpty(result.Error))
+            {
+                errorMessage = $"[Step 3 - Stripe.js] {result.Error}";
+                return;
+            }
+
+            if (string.IsNullOrEmpty(result.Id))
+            {
+                errorMessage = "[Step 3 - Stripe.js] Setup succeeded but no PaymentMethod ID returned. Hard-refresh (Ctrl+Shift+R) and retry.";
+                return;
+            }
+
+            // Step 4: Finalize and link the PaymentMethod to our local account
+            PaymentMethod finalizedMethod;
+            try { finalizedMethod = await ApiService.FinaliseCardSetupAsync(SelectedAccount.Id, result.Id); }
+            catch (Exception ex) { throw new Exception($"[Step 4 - FinaliseCardSetup] PM ID={result.Id} | {ex.Message}"); }
+
+            await OnSetupComplete.InvokeAsync(finalizedMethod);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Setup failed: " + ex.Message;
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+
+    public class StripeResult
+    {
+        public string Id { get; set; }
+        public string Error { get; set; }
+    }
+}
+
+<style>
+    .stripe-card-element {
+        border: 1px solid #ced4da;
+        padding: 12px;
+        border-radius: 8px;
+        background: #fcfcfc;
+        transition: border-color 0.2s;
+    }
+    .stripe-card-element:focus-within {
+        border-color: #6772e5;
+        box-shadow: 0 0 0 3px rgba(103, 114, 229, 0.1);
+    }
+    .btn-primary {
+        background-color: #6772e5;
+        border: none;
+    }
+    .btn-primary:hover:not(:disabled) {
+        background-color: #5469d4;
+    }
+</style>
